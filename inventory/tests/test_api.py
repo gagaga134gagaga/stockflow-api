@@ -219,3 +219,39 @@ def test_invalid_quantity(client_staff, sample):
     # Неправильная операция не изменяет базу.
     assert Stock.objects.count() == 0
     assert StockMovement.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_movement_cannot_be_modified_or_deleted(client_staff, sample):
+    """Существующее движение нельзя изменить или удалить через API."""
+    product, warehouse = sample
+
+    # Создаём реальное поступление через API.
+    response = client_staff.post(
+        "/api/v1/movements/",
+        {
+            "product": product.pk,
+            "warehouse": warehouse.pk,
+            "quantity": 10,
+            "kind": "receipt",
+        },
+    )
+
+    assert response.status_code == 201
+
+    movement = StockMovement.objects.get()
+    url = f"/api/v1/movements/{movement.pk}/"
+
+    # Проверяем запрет редактирования и удаления.
+    assert client_staff.put(url, {"quantity": 20}).status_code == 405
+    assert client_staff.patch(url, {"quantity": 20}).status_code == 405
+    assert client_staff.delete(url).status_code == 405
+
+    # Убеждаемся, что данные не изменились.
+    movement.refresh_from_db()
+    assert movement.quantity == 10
+
+    stock = Stock.objects.get(product=product, warehouse=warehouse)
+    assert stock.quantity == 10
+
+    assert StockMovement.objects.count() == 1
