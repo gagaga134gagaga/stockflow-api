@@ -1,0 +1,12 @@
+target-version = "py312"
+
+lint.select = ["E4", "E7", "E9", "F", "I", "RUF", "EXE"]
+
+# Русские комментарии допустимы.
+# RUF012 не учитывает особенности Django-моделей.
+lint.ignore = ["RUF001", "RUF002", "RUF003", "RUF012"]
+
+extend-exclude = ["**/migrations/*.py"]
+
+[lint.per-file-ignores]
+"manage.py" = ["EXE001"]

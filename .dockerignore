@@ -1,0 +1,30 @@
+# Git
+.git/
+.gitignore
+
+# Секреты и локальные настройки
+.env
+.env.*
+!.env.example
+
+# Виртуальные окружения
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Среды разработки
+.idea/
+.vscode/
+
+# Локальные базы данных
+*.sqlite3
+
+# Системные файлы
+.DS_Store
