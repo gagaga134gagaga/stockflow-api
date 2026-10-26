@@ -47,4 +47,13 @@ class StockMovement(models.Model):
 
     class Meta:
         ordering = ["-created_at", "-id"]
-        constraints = [models.CheckConstraint(condition=Q(quantity__gt=0), name="movement_positive_quantity")]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(quantity__gt=0),
+                name="movement_positive_quantity",
+            ),
+            models.CheckConstraint(
+                condition=Q(kind__in=["receipt", "issue"]),
+                name="movement_valid_kind",
+            ),
+        ]
